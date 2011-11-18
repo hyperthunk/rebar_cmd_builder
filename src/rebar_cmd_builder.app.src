@@ -1,0 +1,9 @@
+{application, rebar_cmd_builder,
+ [
+  {description, "Build Arbitrary Rebar Commands at Runtime"},
+  {vsn, "0.0.1"},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]}
+ ]}.
