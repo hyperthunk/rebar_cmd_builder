@@ -27,15 +27,30 @@
 -define(LOG(Lvl, Msg, Args), rebar_log:log(Lvl, Msg, Args)).
 -define(ABORT(Msg, Args), rebar_utils:abort(Msg, Args)).
 
+-type command_name() :: atom().
+-type command_data() :: any().
+-type instruction_set() :: list(command_data()).
+-type command() :: {'command',
+                    command_name(),
+                    command_data(),
+                    instruction_set()}.
+
+-export_type([command_name/0,
+              command_data/0,
+              instruction_set/0,
+              command/0]).
+
 %%
 %% @doc Generate '<Command>'(Config, _AppFile) handler functions for each
 %% command in `Cmds' and append them to either (a) a new module or (b) the
 %% origin (module) if (a) fails.
 %%
+-spec generate_handler(Base::string(), Cmds::list(rebar_cmd_builder:command()),
+                        Origin::module()) -> module().
 generate_handler(Base, Cmds, Origin) ->
     case rebar_config:get_global({Base, Origin}, undefined) of
         undefined ->
-            ?DEBUG("Generating handler(s) for ~p~n", [Base]),
+            ?DEBUG("Generating handler(s) for ~p: ~p~n", [Base, Cmds]),
             Exports = [ {C, 2} || {command, C, _, _} <- Cmds ],
             Functions = [ gen_function(Base, C, Origin) ||
                                             {command, C, _, _} <- Cmds ],
